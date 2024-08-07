@@ -99,6 +99,28 @@ def trigger_external_integrations(uid: str, memory: Memory) -> list:
     return messages
 
 
+def trigger_make_com_integration(uid: str, memory: Memory) -> list:
+    url = "https://hook.make.com/your-make-com-webhook-url"
+    memory_dict = memory.dict()
+    memory_dict['created_at'] = memory_dict['created_at'].isoformat()
+    memory_dict['started_at'] = memory_dict['started_at'].isoformat() if memory_dict['started_at'] else None
+    memory_dict['finished_at'] = memory_dict['finished_at'].isoformat() if memory_dict['finished_at'] else None
+    if '?' in url:
+        url += '&uid=' + uid
+    else:
+        url += '?uid=' + uid
+
+    response = requests.post(url, json=memory_dict)
+    if response.status_code != 200:
+        print('Make.com integration failed', 'result:', response.content)
+        return []
+
+    print('response', response.json())
+    if message := response.json().get('message', ''):
+        return [add_plugin_message(message, 'make_com', uid, memory.id)]
+    return []
+
+
 def trigger_realtime_integrations(uid: str, segments: List[TranscriptSegment]) -> dict:
     plugins: List[Plugin] = get_plugins_data(uid, include_reviews=False)
     filtered_plugins = [plugin for plugin in plugins if plugin.triggers_realtime() and plugin.enabled]

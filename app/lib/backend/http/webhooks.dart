@@ -49,6 +49,33 @@ Future<String> webhookOnTranscriptReceivedCall(List<TranscriptSegment> segments,
   return triggerTranscriptSegmentsRequest(SharedPreferencesUtil().webhookOnTranscriptReceived, sessionId, segments);
 }
 
+Future<String> triggerMakeComIntegration(ServerMemory? memory) async {
+  if (memory == null) return '';
+  String url = "https://hook.make.com/your-make-com-webhook-url";
+  if (url.contains('?')) {
+    url += '&uid=${SharedPreferencesUtil().uid}';
+  } else {
+    url += '?uid=${SharedPreferencesUtil().uid}';
+  }
+  var data = memory.toJson();
+  try {
+    var response = await makeApiCall(
+      url: url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+      method: 'POST',
+    );
+    debugPrint('Make.com integration response: ${response?.statusCode}');
+    var body = jsonDecode(response?.body ?? '{}');
+    return body['message'] ?? '';
+  } catch (e) {
+    debugPrint('Error triggering Make.com integration: $e');
+    CrashReporting.reportHandledCrash(e, StackTrace.current, level: NonFatalExceptionLevel.info, userAttributes: {
+      'url': url,
+    });
+    return '';
+  }
+}
 
 Future<String> triggerTranscriptSegmentsRequest(String url, String sessionId, List<TranscriptSegment> segments) async {
   debugPrint('triggerMemoryRequestAtEndpoint: $url');

@@ -245,3 +245,25 @@ If your plugin doesn't require user authentication (e.g., it's a purely LLM-base
 - For plugins without authentication, users can simply enable the plugin without additional steps.
 - All your README links, when the user opens them, we'll append a `uid` query parameter to it, which you can use to
   associate setup or credentials with specific users.
+
+### Step 5: Integrating Make.com with Friend App
+
+To integrate Make.com with Friend app, follow these steps:
+
+1. **Create a Make.com Account**: If you don't have a Make.com account, sign up at [Make.com](https://www.make.com/).
+
+2. **Create a New Scenario**: In Make.com, create a new scenario and add the Friend app as a trigger.
+
+3. **Set Up Triggers and Actions**:
+   - **Trigger on Memory Creation**: Configure the scenario to trigger when a new memory is created in the Friend app.
+   - **Action to Create Memory**: Set up an action to create a memory in the Friend app based on the data received from other apps.
+
+4. **Authorize Friend App**: Authorize the Friend app to connect with Make.com by providing the necessary API keys and permissions.
+
+5. **Test the Integration**: Test the integration by creating a memory in the Friend app and verifying that it triggers the scenario in Make.com.
+
+6. **Submit to Make.com Marketplace**: Once the integration is working, submit it to the Make.com marketplace for others to use.
+
+For detailed instructions, refer to the [Make.com Integration Guide](https://www.make.com/en/help/ai-in-make/mem).
+
+Happy integrating! 🎉

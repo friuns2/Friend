@@ -16,6 +16,7 @@ from utils import auth
 from utils.llm import generate_embedding, get_transcript_structure, get_plugin_result, summarize_open_glass
 from utils.location import get_google_maps_location
 from utils.plugins import trigger_external_integrations
+from utils.plugins import trigger_make_com_integration  # P5e4e
 
 router = APIRouter()
 
@@ -92,6 +93,8 @@ def create_memory(
         return CreateMemoryResponse(memory=memory, messages=[])
 
     messages = trigger_external_integrations(uid, memory)
+    make_com_messages = trigger_make_com_integration(uid, memory)  # Pd5e5
+    messages.extend(make_com_messages)  # Pd5e5
     return CreateMemoryResponse(memory=memory, messages=messages)
 
 
@@ -106,7 +109,9 @@ def reprocess_memory(
     if not language_code:  # not breaking change
         language_code = memory.language or 'en'
 
-    return _process_memory(uid, language_code, memory, force_process=True)
+    memory = _process_memory(uid, language_code, memory, force_process=True)
+    make_com_messages = trigger_make_com_integration(uid, memory)  # P1149
+    return memory
 
 
 @router.get('/v1/memories', response_model=List[Memory], tags=['memories'])
